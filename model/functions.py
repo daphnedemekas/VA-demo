@@ -88,12 +88,13 @@ def save_pil_images(
             output_name = f"{current_time}_{k}_score:{score}.png"
             pil_images[k].save(os.path.join(output_filepath, output_name))
 
-def filter_by_top(num_imgs: int, pil_images, scores):
-    if num_imgs < len(scores):
+def filter_by_top(num_imgs, pil_images, scores):
+    if num_imgs > len(scores):
         num_imgs = len(scores)-1
     top_indices = np.argpartition(scores, -num_imgs)[-num_imgs:]
-    top_imgs = pil_images[top_indices]
+    top_imgs = [pil_images[j] for j in top_indices]
     return top_imgs
+
 
 def generate(
     vae,
