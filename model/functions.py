@@ -4,7 +4,7 @@ from rudalle.pipelines import (
 )
 from rudalle import get_tokenizer, get_realesrgan
 import numpy as np
-import datetime
+from datetime import datetime
 import torch
 tokenizer = get_tokenizer()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
