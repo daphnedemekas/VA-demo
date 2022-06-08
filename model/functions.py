@@ -103,7 +103,7 @@ def generate(
     variability,
     rurealesrgan_multiplier,
     output_filepath,
-    filter_by_top = None,
+    num_filtered = None,
     image_amount = 9):
     (
         generation_p,
@@ -116,8 +116,8 @@ def generate(
     pil_images, scores = generate_images_amt(vae, model,
         image_amount, realesrgan, generation_p, generation_k, prompt_text
     )
-    if filter_by_top:
-        pil_images = filter_by_top(filter_by_top, pil_images, scores)
+    if num_filtered is not None:
+        pil_images = filter_by_top(num_filtered, pil_images, scores)
 
     save_pil_images(pil_images, scores, output_filepath = output_filepath)
     return scores
