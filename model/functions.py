@@ -6,6 +6,7 @@ from rudalle import get_tokenizer, get_realesrgan
 import numpy as np
 from datetime import datetime
 import torch
+import os
 tokenizer = get_tokenizer()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
