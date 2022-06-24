@@ -82,17 +82,23 @@ def save_pil_images(
     save_output=True,
     output_filepath="output",
 ):
+    filenames = []
     for k in range(len(pil_images)):
         score = f"{scores[k]}.png"
         if save_output:
             current_time = datetime.now().strftime("%y-%m-%d_%H-%M-%S")
             output_name = f"{current_time}_{k}_score:{score}.png"
-            pil_images[k].save(os.path.join(output_filepath, output_name))
+            f = os.path.join(output_filepath, output_name)
+            pil_images[k].save(f)
+            filenames.append(f)
+    return filenames
+    
 
 def filter_by_top(num_imgs, pil_images, scores):
     if num_imgs > len(scores):
         num_imgs = len(scores)-1
     top_indices = np.argpartition(scores, -num_imgs)[-num_imgs:]
+    print(top_indices)
     top_imgs = [pil_images[j] for j in top_indices]
     return top_imgs
 
@@ -121,5 +127,42 @@ def generate(
     if num_filtered is not None:
         pil_images = filter_by_top(num_filtered, pil_images, scores)
 
-    save_pil_images(pil_images, scores, output_filepath = output_filepath)
-    return scores
+    filenames = save_pil_images(pil_images, scores, output_filepath = output_filepath)
+    return filenames
+
+def get_closest_training_images_by_text(prompt, directory):
+    from sklearn import feature_extraction
+    from PIL import Image
+    from tqdm import tqdm
+    filenames = os.listdir(directory)
+    vect = feature_extraction.text.TfidfVectorizer(min_df=1, stop_words = 'english')
+    # text_features = model.encode_text(text)
+    filenames.append(prompt + '.jpg') 
+    tfidf = vect.fit_transform(filenames)
+    similarity = (tfidf * tfidf.T).toarray()
+    np.fill_diagonal(similarity, np.nan) 
+
+    result_idx = np.nanargmax(similarity[-1])
+   
+    return filenames[result_idx]
+
+
+
+def get_closest_training_images_by_clip(prompt, directory):
+    from transformers import CLIPProcessor, CLIPModel
+    from PIL import Image
+    from tqdm import tqdm
+    model = CLIPModel.from_pretrained('openai/clip-vit-base-patch32')
+    processor = CLIPProcessor.from_pretrained('openai/clip-vit-base-patch32')
+    filenames = os.listdir(directory)[::3]
+    score = 0
+    for i, f in enumerate(tqdm(filenames)):
+        image = Image.open(f'{directory}/{f}')
+        inputs = processor(text=[prompt + '.jpg'], images = image, return_tensors = 'pt', padding=True)
+        outputs = model(**inputs)
+        logits_per_image = outputs.logits_per_image 
+        s = logits_per_image.item()
+        if s > score:
+            score = s
+            index = i
+    return filenames[index]
