@@ -24,4 +24,4 @@ prompts = ['Fashion 16th century of style High Fashion, Theatrical, Baroque, Fig
 'Fashion of style East Asian, Art Deco, Figure']
 for prompt in prompts:
     filepath = f'output/{prompt}'
-    generate(vae, model, prompt, confidence = 'Low', variability = 'Ultra-High', rurealesrgan_multiplier='x8', output_filepath=filepath, filter_by_top = 9, image_amount = 10)
+    generate(vae, model, prompt, confidence = 'Low', variability = 'Ultra-High', rurealesrgan_multiplier='x8', output_filepath=filepath, image_amount = 10)
