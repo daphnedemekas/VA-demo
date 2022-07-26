@@ -8,6 +8,8 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model = get_rudalle_model("Malevich", pretrained=True, fp16=True, device=device)
 vae = get_vae().to("cuda")
 
+model_path = os.path.join(f'../VA-design-generator/checkpoints/lookingglass_dalle_90000.pt')
+model.load_state_dict(torch.load(model_path))
 
 prompts = ['Fashion 16th century of style High Fashion, Theatrical, Baroque, Figure',
 'Fashion 17th century of style High Fashion, Theatrical, Figure, by Versace',
