@@ -22,6 +22,9 @@ prompts = ['Fashion 16th century of style High Fashion, Theatrical, Baroque, Fig
 'Fashion 20th century of style High Fashion, East Asian, Dress Figure, by Versace',
 
 'Fashion of style East Asian, Art Deco, Figure']
+import os 
 for prompt in prompts:
     filepath = f'output/{prompt}'
+    if not os.path.exists(filepath):
+        os.mkdir(filepath)
     generate(vae, model, prompt, confidence = 'Low', variability = 'Ultra-High', rurealesrgan_multiplier='x8', output_filepath=filepath, image_amount = 10)
