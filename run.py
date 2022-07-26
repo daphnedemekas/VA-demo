@@ -2,13 +2,13 @@
 from rudalle import get_rudalle_model, get_tokenizer, get_vae
 import torch
 from model.functions import generate
-
+import os 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 model = get_rudalle_model("Malevich", pretrained=True, fp16=True, device=device)
 vae = get_vae().to("cuda")
 
-model_path = os.path.join(f'../VA-design-generator/checkpoints/lookingglass_dalle_90000.pt')
+model_path = os.path.join(f'../../VA-design-generator/checkpoints/lookingglass_dalle_90000.pt')
 model.load_state_dict(torch.load(model_path))
 
 prompts = ['Fashion 16th century of style High Fashion, Theatrical, Baroque, Figure',
@@ -24,7 +24,6 @@ prompts = ['Fashion 16th century of style High Fashion, Theatrical, Baroque, Fig
 'Fashion 20th century of style High Fashion, East Asian, Dress Figure, by Versace',
 
 'Fashion of style East Asian, Art Deco, Figure']
-import os 
 for prompt in prompts:
     filepath = f'output/{prompt}'
     if not os.path.exists(filepath):
